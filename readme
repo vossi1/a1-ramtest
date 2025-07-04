@@ -7,5 +7,5 @@ use in Prom-replacement-adapter
 
 tests zeropage, page 1, page 2 with simple 55/AA test
 shows first found faulty bits as 1
-The test needs no RAM to run: no zeropage, no stuck.
+The test needs no RAM to run: no zeropage, no stack.
 it uses exactly 256 bytes - two more than Wozmon ;)
