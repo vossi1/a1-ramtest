@@ -1,0 +1,11 @@
+Apple1 Ramtest as monitor replacement @FF00-FFFF
+(c) Vossi 07/2025
+assemble with ACME
+use in Prom-replacement-adapter
+
+- initial version
+
+tests zeropage, page 1, page 2 with simple 55/AA test
+shows first found faulty bits as 1
+The test needs no RAM to run: no zeropage, no stuck.
+it uses exactly 256 bytes - two more than Wozmon ;)
