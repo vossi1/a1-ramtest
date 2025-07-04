@@ -1,0 +1,4 @@
+#!/bin/sh
+acme -Wtype-mismatch -r ramtest.lst -v ramtest.a
+#acme -r ramtest.lst -v ramtest.a
+minipro -s -p at29c256@dip28 -w ramtest.bin
