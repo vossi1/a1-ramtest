@@ -18,117 +18,117 @@ CR		= $d		; carriage return
 !addr dsp	= $d012		; write ascii
 !addr dspcr	= $d013		; control port
 ; ******************************************* CODE ************************************************
-!initmem $ff		; All unused memory filled with $ff
+!initmem $ff			; All unused memory filled with $ff
 !zone code
 *= $ff00
 ; reset entry
 start:	cld
 	cli
 ; init I/O
-	ldy #$7f	; 01111111 - bit#0-6 = output to display
+	ldy #$7f		; 01111111 - bit#0-6 = output to display
 	sty dsp
-	lda #$a7	; 10100111 - configure both ports
+	lda #$a7		; 10100111 - configure both ports
 	sta kbdcr
 	sta dspcr
 ; -------------------------------------------------------------------------------------------------
 ; code
 test:	ldx #0
-msgloop:lda message,x	; get string
-	beq testpg0	; 0 = end?..abort
+msgloop:lda message,x		; get string
+	beq testpg0		; 0 = end?..abort
 -	bit dsp
-	bmi -		; wait for the display to be not-busy
+	bmi -			; wait for the display to be not-busy
 	sta dsp
 	inx
-	bne msgloop	; always next char
+	bne msgloop		; always next char
 
 ; .a already 0
-testpg0:tax		; counter = 0
-	ldy #$aa	; store pattern 2
-loop0:	lda #$55	; pattern
-	sta page0,x	; store
-	eor page0,x	; check
-	bne fault	; failure - faulty bits in .a = 1
-	tya		; get pattern 2
-	sta page0,x	; store
-	eor page0,x	; check
-	bne fault	; failure - faulty bits in .a = 1
+testpg0:tax			; counter = 0
+	ldy #$aa		; store pattern 2
+loop0:	lda #$55		; pattern
+	sta page0,x		; store
+	eor page0,x		; check
+	bne fault		; failure - faulty bits in .a = 1
+	tya			; get pattern 2
+	sta page0,x		; store
+	eor page0,x		; check
+	bne fault		; failure - faulty bits in .a = 1
 	inx
-	bne loop0	; next byte
+	bne loop0		; next byte
 ; .x already 0
-page0ok:lda mspg0ok,x	; get string
-	beq testpg1	; 0=end?..abort
+page0ok:lda mspg0ok,x		; get string
+	beq testpg1		; 0=end?..abort
 -	bit dsp
-	bmi -		; wait for the display to be not-busy
+	bmi -			; wait for the display to be not-busy
 	sta dsp
 	inx
-	bne page0ok	; always next char
+	bne page0ok		; always next char
 
-fault:	tay		; remember faulty bits
+fault:	tay			; remember faulty bits
 	ldx #0
-faultlp:lda msfault,x	; get string
-	beq bits	; 0=end?..abort
+faultlp:lda msfault,x		; get string
+	beq bits		; 0=end?..abort
 -	bit dsp
-	bmi -		; wait for the display to be not-busy
+	bmi -			; wait for the display to be not-busy
 	sta dsp
 	inx
-	bne faultlp	; always next char
-bits:	tya		; restore faulty bits
-	ldx #8		; 8 bits to print
-bitlp:	ldy #"0"	; ascii 0
-	asl		; highest bit in carry
+	bne faultlp		; always next char
+bits:	tya			; restore faulty bits
+	ldx #8			; 8 bits to print
+bitlp:	ldy #"0"		; ascii 0
+	asl			; highest bit in carry
 	bcc bitok	; bit = 0?..skip
 ; bit = 1
-	iny		; asccii 1 
+	iny			; asccii 1 
 bitok:	bit dsp
-	bmi bitok	; wait for the display to be not-busy
-	sty dsp		; print bit
+	bmi bitok		; wait for the display to be not-busy
+	sty dsp			; print bit
 	dex
-	bne bitlp	; next bit
+	bne bitlp		; next bit
 	beq test
 
 ; .x already 0
-testpg1:tax		; counter = 0
-loop1:	lda #$55	; pattern
-	sta page1,x	; store
-	eor page1,x	; check
-	bne fault	; failure - faulty bits in .a = 1
-	tya		; get pattern 2
-	sta page1,x	; store
-	eor page1,x	; check
-	bne fault	; failure - faulty bits in .a = 1
+testpg1:tax			; counter = 0
+loop1:	lda #$55		; pattern
+	sta page1,x		; store
+	eor page1,x		; check
+	bne fault		; failure - faulty bits in .a = 1
+	tya			; get pattern 2
+	sta page1,x		; store
+	eor page1,x		; check
+	bne fault		; failure - faulty bits in .a = 1
 	inx
-	bne loop1	; next byte
+	bne loop1		; next byte
 ; .x already 0
-page1ok:lda mspg1ok,x	; get string
-	beq testpg2	; 0=end?..abort
+page1ok:lda mspg1ok,x		; get string
+	beq testpg2		; 0=end?..abort
 -	bit dsp
-	bmi -		; wait for the display to be not-busy
+	bmi -			; wait for the display to be not-busy
 	sta dsp
 	inx
-	bne page1ok	; always next char
+	bne page1ok		; always next char
 
 ; .x already 0
-testpg2:tax		; counter = 0
-loop2:	lda #$55	; pattern
-	sta page2,x	; store
-	eor page2,x	; check
-	bne fault	; failure - faulty bits in .a = 1
-	tya		; get pattern 2
-	sta page2,x	; store
-	eor page2,x	; check
-	bne fault	; failure - faulty bits in .a = 1
+testpg2:tax			; counter = 0
+loop2:	lda #$55		; pattern
+	sta page2,x		; store
+	eor page2,x		; check
+	bne fault		; failure - faulty bits in .a = 1
+	tya			; get pattern 2
+	sta page2,x		; store
+	eor page2,x		; check
+	bne fault		; failure - faulty bits in .a = 1
 	inx
-	bne loop2	; next byte
+	bne loop2		; next byte
 ; .x already 0
-page2ok:lda mspg2ok,x	; get string
-	beq end		; 0=end?..abort
+page2ok:lda mspg2ok,x		; get string
+	beq end			; 0=end?..abort
 -	bit dsp
-	bmi -		; wait for the display to be not-busy
+	bmi -			; wait for the display to be not-busy
 	sta dsp
 	inx
-	bne page2ok	; always next char
+	bne page2ok		; always next char
 
-end:	jmp test	; again from start
+end:	jmp test		; again from start
 ; -------------------------------------------------------------------------------------------------
 ; print the ascii char in A to the display
 echo:	rts
@@ -144,6 +144,6 @@ mspg2ok	!tx "page2 ok",CR,0
 ; hardware vectors
 !zone hardvectors
 *= $fffa
-	!word $0f00       ; NMI
-	!word start       ; reset
-	!word $0000       ; IRQ
+	!word $0f00      	; NMI
+	!word start      	; reset
+	!word $0000     	; IRQ
